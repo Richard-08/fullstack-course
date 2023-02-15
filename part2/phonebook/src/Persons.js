@@ -2,12 +2,18 @@ import React from "react";
 
 export default function Persons({ persons }) {
   return (
-    <ul>
-      {persons.map((person) => (
-        <li key={person.name}>
-          {person.name} - {person.phone}
-        </li>
-      ))}
-    </ul>
+    <table>
+      <tbody>
+        {persons.map((person) => (
+          <tr key={person.name}>
+            <td>{person.name}</td>
+            <td>{person.number}</td>
+            <td>
+              <button>delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

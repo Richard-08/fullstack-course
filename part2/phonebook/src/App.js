@@ -1,23 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
 
+import personService from "./services/persons";
+
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "040-123456", id: 1 },
-    { name: "Ada Lovelace", phone: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", phone: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", phone: "39-23-6423122", id: 4 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
-  const [newPhone, setNewPhone] = useState("");
+  const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    personService.getAll().then((data) => {
+      setPersons(data);
+    });
+  }, []);
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (!newName.trim() || !newPhone.trim()) {
+    if (!newName.trim() || !newNumber.trim()) {
       return;
     }
 
@@ -28,9 +31,9 @@ const App = () => {
       return;
     }
 
-    setPersons([...persons, { name: newName, phone: newPhone }]);
+    setPersons([...persons, { name: newName, number: newNumber }]);
     setNewName("");
-    setNewPhone("");
+    setNewNumber("");
   }
 
   function handleName(e) {
@@ -38,7 +41,7 @@ const App = () => {
   }
 
   function handlePhone(e) {
-    setNewPhone(e.target.value);
+    setNewNumber(e.target.value);
   }
 
   function handleFilter(e) {
@@ -55,11 +58,14 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filter={filter} handleFilter={handleFilter} />
+      <Filter
+        filter={filter}
+        handleFilter={handleFilter}
+      />
       <h3>Add a new</h3>
       <PersonForm
         name={newName}
-        phone={newPhone}
+        phone={newNumber}
         handleName={handleName}
         handlePhone={handlePhone}
         handleSubmit={handleSubmit}
