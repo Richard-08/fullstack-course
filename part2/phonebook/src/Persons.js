@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Persons({ persons }) {
+export default function Persons({ persons, handleDelete }) {
   return (
     <table>
       <tbody>
@@ -9,7 +9,7 @@ export default function Persons({ persons }) {
             <td>{person.name}</td>
             <td>{person.number}</td>
             <td>
-              <button>delete</button>
+              <button onClick={() => handleDelete(person)}>delete</button>
             </td>
           </tr>
         ))}

@@ -17,7 +17,7 @@ const App = () => {
     });
   }, []);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     if (!newName.trim() || !newNumber.trim()) {
@@ -27,11 +27,40 @@ const App = () => {
     let exists = persons.find((person) => person.name === newName);
 
     if (exists) {
-      alert(`${newName} is already added to phonebook`);
+      const confirm = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (confirm) {
+        await personService.update(exists.id, {
+          name: exists.name,
+          number: newNumber,
+        });
+        setPersons(
+          persons.map((person) => {
+            if (person.id === exists.id) {
+              return {
+                ...person,
+                number: newNumber,
+              };
+            }
+
+            return person;
+          })
+        );
+      }
+      clearFrom();
       return;
     }
 
-    setPersons([...persons, { name: newName, number: newNumber }]);
+    const newPerson = { name: newName, number: newNumber };
+
+    await personService.create(newPerson);
+    setPersons([...persons, newPerson]);
+    clearFrom();
+  }
+
+  function clearFrom() {
     setNewName("");
     setNewNumber("");
   }
@@ -46,6 +75,14 @@ const App = () => {
 
   function handleFilter(e) {
     setFilter(e.target.value);
+  }
+
+  function handleDelete(person) {
+    const confirm = window.confirm(`Delete ${person.name}?`);
+    if (confirm) {
+      personService.remove(person.id);
+      setPersons(persons.filter((item) => item.id !== person.id));
+    }
   }
 
   const filtered_persons = () => {
@@ -71,7 +108,10 @@ const App = () => {
         handleSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
-      <Persons persons={filtered_persons()} />
+      <Persons
+        persons={filtered_persons()}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };
