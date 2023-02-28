@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
+import Notification from "./Notification";
 
 import personService from "./services/persons";
 
@@ -10,6 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState(null);
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     personService.getAll().then((data) => {
@@ -50,6 +53,7 @@ const App = () => {
         );
       }
       clearFrom();
+      showMessage(`Updated ${exists.name}`, "success");
       return;
     }
 
@@ -58,6 +62,16 @@ const App = () => {
     await personService.create(newPerson);
     setPersons([...persons, newPerson]);
     clearFrom();
+    showMessage(`Added ${newPerson.name}`, "success");
+  }
+
+  function showMessage(msg, type) {
+    setMessage(msg);
+    setStatus(type);
+    setTimeout(() => {
+      setMessage(null);
+      setStatus("");
+    }, 3000);
   }
 
   function clearFrom() {
@@ -80,8 +94,20 @@ const App = () => {
   function handleDelete(person) {
     const confirm = window.confirm(`Delete ${person.name}?`);
     if (confirm) {
-      personService.remove(person.id);
-      setPersons(persons.filter((item) => item.id !== person.id));
+      const newData = persons.filter((item) => item.id !== person.id);
+      personService
+        .remove(person.id)
+        .then(() => {
+          setPersons(newData);
+          showMessage(`Deleted ${person.name}`, "success");
+        })
+        .catch(() => {
+          setPersons(newData);
+          showMessage(
+            `Information of ${person.name} has already been removed from server`,
+            "error"
+          );
+        });
     }
   }
 
@@ -95,6 +121,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        message={message}
+        type={status}
+      />
       <Filter
         filter={filter}
         handleFilter={handleFilter}
