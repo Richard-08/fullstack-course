@@ -4,6 +4,8 @@ import CountriesList from "./CountriesList";
 import CountryDetail from "./CountryDetail";
 import countriesService from "./services/countries";
 
+import "./styles.css";
+
 const App = () => {
   const [search, setSearch] = useState("");
   const [countries, setCountries] = useState([]);
@@ -44,7 +46,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <main>
       <SearchForm
         search={search}
         onInput={handleInput}
@@ -56,7 +58,7 @@ const App = () => {
         />
       )}
       {country && <CountryDetail country={country} />}
-    </div>
+    </main>
   );
 };
 
