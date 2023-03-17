@@ -59,10 +59,14 @@ const App = () => {
 
     const newPerson = { name: newName, number: newNumber };
 
-    await personService.create(newPerson);
-    setPersons([...persons, newPerson]);
+    const createdPerson = await personService
+      .create(newPerson)
+      .catch((error) => {
+        console.log(error);
+      });
+    setPersons([...persons, createdPerson]);
     clearFrom();
-    showMessage(`Added ${newPerson.name}`, "success");
+    showMessage(`Added ${createdPerson.name}`, "success");
   }
 
   function showMessage(msg, type) {
