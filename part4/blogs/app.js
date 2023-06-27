@@ -8,6 +8,7 @@ const errorHandler = require("./middleware/errorHandler");
 const config = require("./utils/config");
 
 const blogsRouter = require("./controllers/blogs");
+const usersRouter = require("./controllers/users");
 
 mongoose.set("strictQuery", false);
 mongoose.connect(config.MONGODB_URI);
@@ -20,6 +21,7 @@ morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(express.json());
 
 app.use("/api/blogs", blogsRouter);
+app.use("/api/users", usersRouter);
 
 app.use(errorHandler);
 
