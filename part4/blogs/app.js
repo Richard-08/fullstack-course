@@ -4,6 +4,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const errorHandler = require("./middleware/errorHandler");
+const tokenExtractor = require("./middleware/tokenExractor");
+const userExtractor = require("./middleware/userExtractor");
 
 const config = require("./utils/config");
 
@@ -20,6 +22,9 @@ app.use(cors());
 app.use(morgan("combined"));
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(express.json());
+
+app.use(tokenExtractor);
+app.use(userExtractor);
 
 app.use("/api/blogs", blogsRouter);
 app.use("/api/users", usersRouter);
