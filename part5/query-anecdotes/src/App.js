@@ -3,12 +3,19 @@ import AnecdoteForm from "./components/AnecdoteForm";
 import Notification from "./components/Notification";
 import { getAll, updateVotes } from "./services/anecdotes";
 
+import {
+  useNotificationDispatch,
+  setNotification,
+} from "./NotificationContext";
+
 const App = () => {
+  const dispatch = useNotificationDispatch();
   const queryClient = useQueryClient();
 
   const voteMutation = useMutation(updateVotes, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries("anecdotes");
+      dispatch(setNotification(`anecdote '${data.content}' voted`));
     },
   });
 
